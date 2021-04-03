@@ -1,0 +1,2 @@
+include ':SpecialsApp'
+rootProject.name = "Specials List"
