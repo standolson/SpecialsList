@@ -1,6 +1,6 @@
 package com.swiftly.specialsapp.model
 
 class SpecialsList {
-    var canvasUnit: UInt? = null
-    var managersSpecials: List<Special?>? = null
+    var canvasUnit: Int? = null
+    var managerSpecials: List<Special?>? = null
 }

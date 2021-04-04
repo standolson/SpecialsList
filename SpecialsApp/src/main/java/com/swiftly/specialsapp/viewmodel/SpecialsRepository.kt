@@ -1,7 +1,7 @@
 package com.swiftly.specialsapp.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.MediatorLiveData
+import com.google.gson.Gson
 import com.swiftly.specialsapp.model.SpecialsList
 import com.swiftly.specialsapp.util.ResponseData
 import kotlinx.coroutines.Dispatchers
@@ -47,7 +47,9 @@ class SpecialsRepository @Inject constructor() {
     }
 
     private fun parseResponse(response: Response)  : SpecialsList {
-        return SpecialsList()
+        val gson = Gson()
+        val response = gson.fromJson(response.body?.charStream(), SpecialsList::class.java)
+        return response
     }
 
     companion object {
