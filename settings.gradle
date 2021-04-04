@@ -1,2 +1,2 @@
 include ':SpecialsApp'
-rootProject.name = "Specials List"
+rootProject.name = "SwiftlyDemo"
