@@ -15,6 +15,6 @@ class SpecialsListActivity : AppCompatActivity() {
         val fragment = SpecialsListFragment()
         val fragmentTag = fragment::class.java.simpleName
         if (savedInstanceState == null)
-            supportFragmentManager.beginTransaction().add(R.id.fragmentContainer, fragment, fragmentTag).commit()
+            supportFragmentManager.beginTransaction().add(R.id.fragment_container, fragment, fragmentTag).commit()
     }
 }

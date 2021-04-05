@@ -3,15 +3,15 @@ package com.swiftly.specialsapp.util
 class ResponseData<D>
 {
     var data: D? = null
-    var resultStatus: String? = null
+    var errorStatus: String? = null
 
     constructor(resultStatus: String?) {
-        this.resultStatus = resultStatus
+        this.errorStatus = resultStatus
     }
 
     constructor(data: D) {
         this.data = data
     }
 
-    public fun hasStatusMessage() : Boolean = resultStatus != null
+    public fun hasStatusMessage() : Boolean = errorStatus != null
 }
