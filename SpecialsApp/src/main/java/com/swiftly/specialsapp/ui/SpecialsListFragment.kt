@@ -10,6 +10,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
 import com.swiftly.specialsapp.R
 import com.swiftly.specialsapp.model.ScreenState
+import com.swiftly.specialsapp.model.SpecialsList
 import com.swiftly.specialsapp.viewmodel.SpecialsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -27,6 +28,7 @@ class SpecialsListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewModel.run {
             screenState.observe(viewLifecycleOwner, Observer { setScreenState(viewModel, it) })
+            specialsItems.observe(viewLifecycleOwner, Observer { showItems(it) })
             error.observe(viewLifecycleOwner, Observer { showError(viewModel) })
         }
     }
@@ -39,6 +41,12 @@ class SpecialsListFragment : Fragment() {
     private fun loadScreen() {
         showContent(false)
         viewModel.loadSpecials()
+    }
+
+    private fun showItems(items: SpecialsList) {
+        Toast.makeText(context,
+            "Received " + items.managerSpecials!!.size + " items, canvasUnit " + items.canvasUnit,
+            Toast.LENGTH_LONG).show()
     }
 
     private fun setScreenState(viewModel: SpecialsViewModel?, loadState: ScreenState) {

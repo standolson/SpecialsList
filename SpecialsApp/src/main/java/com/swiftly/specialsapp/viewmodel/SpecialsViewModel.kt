@@ -18,6 +18,8 @@ open class SpecialsViewModel @Inject constructor(
 
     var screenState = MutableLiveData<ScreenState>()
 
+    var specialsItems = MutableLiveData<SpecialsList>()
+
     var error = MutableLiveData<String>()
 
     public fun loadSpecials() : SpecialsViewModel {
@@ -33,7 +35,7 @@ open class SpecialsViewModel @Inject constructor(
             screenState.value = ScreenState.ERROR
         }
         else {
-            val list = response.data
+            specialsItems.value = response.data
             screenState.value = ScreenState.READY
         }
     }
