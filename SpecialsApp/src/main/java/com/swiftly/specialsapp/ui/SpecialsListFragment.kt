@@ -8,6 +8,8 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.swiftly.specialsapp.R
 import com.swiftly.specialsapp.model.ScreenState
 import com.swiftly.specialsapp.model.SpecialsList
@@ -27,7 +29,7 @@ class SpecialsListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewModel.run {
-            screenState.observe(viewLifecycleOwner, Observer { setScreenState(viewModel, it) })
+            screenState.observe(viewLifecycleOwner, Observer { setScreenState(it) })
             specialsItems.observe(viewLifecycleOwner, Observer { showItems(it) })
             error.observe(viewLifecycleOwner, Observer { showError(viewModel) })
         }
@@ -47,9 +49,15 @@ class SpecialsListFragment : Fragment() {
         Toast.makeText(context,
             "Received " + items.managerSpecials!!.size + " items, canvasUnit " + items.canvasUnit,
             Toast.LENGTH_LONG).show()
+
+        val recyclerView = rootView.findViewById(R.id.fragment_contents) as RecyclerView
+        val adapter = SpecialsListAdapter(items)
+        recyclerView.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+        recyclerView.adapter = adapter
+        adapter.notifyDataSetChanged()
     }
 
-    private fun setScreenState(viewModel: SpecialsViewModel?, loadState: ScreenState) {
+    private fun setScreenState(loadState: ScreenState) {
         when (loadState) {
             ScreenState.LOADING -> showContent(false)
             ScreenState.READY -> showContent(true)

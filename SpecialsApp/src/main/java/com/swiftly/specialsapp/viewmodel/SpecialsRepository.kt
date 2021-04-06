@@ -35,7 +35,7 @@ class SpecialsRepository @Inject constructor() {
 
             withContext(Dispatchers.Main) {
                 if (returnVal != null)
-                    liveData.value = ResponseData(returnVal!!)
+                    liveData.value = ResponseData(returnVal)
                 else if (exceptionMessage != null)
                     liveData.value = ResponseData(exceptionMessage)
                 else
@@ -46,10 +46,8 @@ class SpecialsRepository @Inject constructor() {
         return liveData
     }
 
-    private fun parseResponse(response: Response)  : SpecialsList {
-        val gson = Gson()
-        val response = gson.fromJson(response.body?.charStream(), SpecialsList::class.java)
-        return response
+    private fun parseResponse(response: Response) : SpecialsList {
+        return Gson().fromJson(response.body?.charStream(), SpecialsList::class.java)
     }
 
     companion object {

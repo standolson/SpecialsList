@@ -2,14 +2,14 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:background="@android:color/darker_gray">
 
     <include layout="@layout/progress_spinner" />
 
-    <TextView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/fragment_contents"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textSize="20dp"
-        android:text="Hello, world!" />
+        android:layout_height="match_parent"
+        android:scrollbars="vertical" />
 </FrameLayout>
