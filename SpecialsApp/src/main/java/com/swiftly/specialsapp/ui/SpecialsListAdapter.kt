@@ -5,12 +5,15 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.DimenRes
+import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.swiftly.specialsapp.R
 import com.swiftly.specialsapp.databinding.SpecialsItemBinding
 import com.swiftly.specialsapp.model.Special
 import com.swiftly.specialsapp.model.SpecialsList
+import com.swiftly.specialsapp.model.SpecialsSize
 
 class SpecialsListAdapter(val list: SpecialsList) : RecyclerView.Adapter<SpecialsListAdapter.SpecialsListViewHolder>() {
 
@@ -52,7 +55,8 @@ class SpecialsListAdapter(val list: SpecialsList) : RecyclerView.Adapter<Special
             rowLayout.add(currentRow)
     }
 
-    class SpecialsListViewHolder(val binding: SpecialsItemBinding) : RecyclerView.ViewHolder(binding.root)
+    class SpecialsListViewHolder(val binding: SpecialsItemBinding) :
+        RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): SpecialsListViewHolder {
         val inflater = LayoutInflater.from(viewGroup.context)
@@ -63,6 +67,10 @@ class SpecialsListAdapter(val list: SpecialsList) : RecyclerView.Adapter<Special
     override fun onBindViewHolder(viewHolder: SpecialsListViewHolder, position: Int) {
         val item = getItem(position)
         viewHolder.binding.item = item
+        val size = SpecialsSize()
+        size.height = 600
+        size.width = 800
+        viewHolder.binding.sizeInfo = size
 
         // Add strikethrough on the text for the original price
         val originalPriceView = viewHolder.itemView.findViewById(R.id.original_price) as TextView
@@ -73,11 +81,24 @@ class SpecialsListAdapter(val list: SpecialsList) : RecyclerView.Adapter<Special
         Glide.with(imageView.context).load(item.imageUrl).into(imageView)
     }
 
-    fun getItem(position: Int) : Special = list.managerSpecials!![position]!!
+    fun getItem(position: Int): Special = list.managerSpecials!![position]!!
 
     override fun getItemCount(): Int =
         if (list.managerSpecials == null)
             0
         else
             list.managerSpecials!!.size
+}
+
+@BindingAdapter("android:layout_width")
+fun setLayoutWidth(view: ViewGroup, @DimenRes width: Int) {
+    val layoutParams = view.layoutParams
+    layoutParams.width = width
+    view.layoutParams = layoutParams
+}
+@BindingAdapter("android:layout_height")
+fun setLayoutHeight(view: ViewGroup, @DimenRes height: Int) {
+    val layoutParams = view.layoutParams
+    layoutParams.height = height
+    view.layoutParams = layoutParams
 }
