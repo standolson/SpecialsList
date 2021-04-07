@@ -1,5 +1,9 @@
 package com.swiftly.specialsapp.util
 
+/**
+ * Helper class that holds both response data and an error.  Allows repository classes
+ * to pass an error back to the UI for display.
+ */
 class ResponseData<D>
 {
     var data: D? = null

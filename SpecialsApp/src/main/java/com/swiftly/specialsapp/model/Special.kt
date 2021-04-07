@@ -2,6 +2,9 @@ package com.swiftly.specialsapp.model
 
 import com.google.gson.annotations.SerializedName
 
+/**
+ * Describes one manabger's special
+ */
 class Special {
     var imageUrl: String? = null
     var width: Int? = null

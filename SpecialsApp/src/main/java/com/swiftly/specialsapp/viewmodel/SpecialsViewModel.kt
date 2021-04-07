@@ -11,6 +11,11 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ * The [ViewModel] for getting the list of manager's specials.  Lets users of itself
+ * observe final [ScreenState], the returned [SpecialsList], or the error string from
+ * the [SpecialsRepository]
+ */
 @HiltViewModel
 open class SpecialsViewModel @Inject constructor(
     private val repository: SpecialsRepository

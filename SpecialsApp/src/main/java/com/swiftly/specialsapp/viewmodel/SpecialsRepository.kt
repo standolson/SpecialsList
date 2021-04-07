@@ -11,6 +11,11 @@ import okhttp3.Request
 import okhttp3.Response
 import javax.inject.Inject
 
+/**
+ * Repository for obtaining the manager's specials from the service.  Uses OkHttp and GSON.
+ * Returns via [MediatorLiveData] the [ResponseData] containing either the list of an error
+ * string.
+ */
 class SpecialsRepository @Inject constructor() {
 
     suspend fun getSpecialsList() : MediatorLiveData<ResponseData<SpecialsList>> {

@@ -16,6 +16,9 @@ import com.swiftly.specialsapp.model.SpecialsList
 import com.swiftly.specialsapp.viewmodel.SpecialsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ * The [Fragment] which displays the list of manager's specials.
+ */
 @AndroidEntryPoint
 class SpecialsListFragment : Fragment() {
 
@@ -40,11 +43,18 @@ class SpecialsListFragment : Fragment() {
         loadScreen()
     }
 
+    /**
+     * Loads the list of specials from the service while showing an intdeterminate spinner
+     */
     private fun loadScreen() {
         showContent(false)
         viewModel.loadSpecials()
     }
 
+    /**
+     * When a list of manager's specials is received from the [SpecialsViewModel], display
+     * those using a [SpecialsListAdapter] on the view's [RecyclerView]
+     */
     private fun showItems(items: SpecialsList) {
         Toast.makeText(context,
             "Received " + items.managerSpecials!!.size + " items, canvasUnit " + items.canvasUnit,
@@ -57,6 +67,10 @@ class SpecialsListFragment : Fragment() {
         adapter.notifyDataSetChanged()
     }
 
+    /**
+     * Sets the proper state of the screen to display either a spinner while loading, the
+     * content when received, or no content on error
+     */
     private fun setScreenState(loadState: ScreenState) {
         when (loadState) {
             ScreenState.LOADING -> showContent(false)
@@ -65,6 +79,7 @@ class SpecialsListFragment : Fragment() {
         }
     }
 
+    // TODO: Show a dialog
     private fun showError(viewModel: SpecialsViewModel) {
         Toast.makeText(context, "Error: " + viewModel.error.value, Toast.LENGTH_LONG).show()
     }

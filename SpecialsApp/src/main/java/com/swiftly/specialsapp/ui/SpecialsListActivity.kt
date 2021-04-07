@@ -5,6 +5,9 @@ import androidx.appcompat.app.AppCompatActivity
 import com.swiftly.specialsapp.R
 import dagger.hilt.android.AndroidEntryPoint
 
+/**
+ * Simple [Activity] class to hold the [Fragment] displaying the manager's specials
+ */
 @AndroidEntryPoint
 class SpecialsListActivity : AppCompatActivity() {
 

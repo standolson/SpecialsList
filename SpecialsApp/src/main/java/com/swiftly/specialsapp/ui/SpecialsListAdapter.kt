@@ -14,6 +14,44 @@ import com.swiftly.specialsapp.model.SpecialsList
 
 class SpecialsListAdapter(val list: SpecialsList) : RecyclerView.Adapter<SpecialsListAdapter.SpecialsListViewHolder>() {
 
+    private var rowLayout = mutableListOf<MutableList<Int>>()
+
+    init {
+        computeRowLayout()
+    }
+
+    private fun computeRowLayout() {
+        rowLayout.clear()
+
+        if (list.managerSpecials == null || list.canvasUnit == null)
+            return
+
+        // Iterate over all of the specials and create an array for each line
+        // containing the indicies of the specials on that line.
+        //
+        // As part of this process, throw out any special that is missing or
+        // has no width
+        var rowTotalWidth = 0
+        var currentRow = mutableListOf<Int>()
+        for (i in list.managerSpecials!!.indices) {
+            val item = list.managerSpecials!![i]
+            if (item == null || item.width == null)
+                continue
+
+            if (rowTotalWidth + item.width!! > list.canvasUnit!!) {
+                rowLayout.add(currentRow)
+                currentRow = mutableListOf<Int>()
+                rowTotalWidth = 0
+            }
+            rowTotalWidth += item.width!!
+            currentRow.add(i)
+        }
+
+        // If there are any items left over, add them as a line now
+        if (currentRow.size > 0)
+            rowLayout.add(currentRow)
+    }
+
     class SpecialsListViewHolder(val binding: SpecialsItemBinding) : RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): SpecialsListViewHolder {
