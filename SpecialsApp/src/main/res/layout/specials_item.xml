@@ -17,7 +17,7 @@
         android:layout_width="@{item != null ? sizeInfo.width : 0, default=match_parent}"
         android:layout_height="@{item != null ? sizeInfo.height : 0, default=wrap_content}"
         android:padding="@dimen/generic_padding"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:background="@android:color/darker_gray" >
 
         <androidx.constraintlayout.widget.ConstraintLayout

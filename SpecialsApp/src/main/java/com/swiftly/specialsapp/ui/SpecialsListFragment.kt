@@ -1,6 +1,7 @@
 package com.swiftly.specialsapp.ui
 
 import android.os.Bundle
+import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,8 +26,11 @@ class SpecialsListFragment : Fragment() {
     lateinit var rootView: View
     val viewModel: SpecialsViewModel by activityViewModels<SpecialsViewModel>()
 
+    // Set to true to display one special per row
+    val useFlatRecyclerView = false
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        rootView = LayoutInflater.from(getActivity()).inflate(R.layout.specials_list_fragment, container, false)
+        rootView = LayoutInflater.from(activity).inflate(R.layout.specials_list_fragment, container, false)
         return rootView
     }
 
@@ -53,15 +57,40 @@ class SpecialsListFragment : Fragment() {
 
     /**
      * When a list of manager's specials is received from the [SpecialsViewModel], display
-     * those using a [SpecialsListAdapter] on the view's [RecyclerView]
+     * those using a [SpecialsFlatListAdapter] (one special per row)]on the view's [RecyclerView]
      */
     private fun showItems(items: SpecialsList) {
         Toast.makeText(context,
             "Received " + items.managerSpecials!!.size + " items, canvasUnit " + items.canvasUnit,
             Toast.LENGTH_LONG).show()
 
+        val displayMetrics = DisplayMetrics()
+        displayMetrics.widthPixels = 0
+        activity?.getWindowManager()?.getDefaultDisplay()?.getMetrics(displayMetrics)
+
+        if (useFlatRecyclerView)
+            useFlatRecyclerView(items, displayMetrics)
+        else
+            useMultiItemRecyclerView(items, displayMetrics)
+    }
+
+    /**
+     * Display one special per row in the [RecyclerView]
+     */
+    private fun useFlatRecyclerView(items: SpecialsList, displayMetrics: DisplayMetrics) {
         val recyclerView = rootView.findViewById(R.id.fragment_contents) as RecyclerView
-        val adapter = SpecialsListAdapter(items)
+        val adapter = SpecialsListFlatAdapter(items, displayMetrics)
+        recyclerView.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+        recyclerView.adapter = adapter
+        adapter.notifyDataSetChanged()
+    }
+
+    /**
+     * Display multiple specials per row in the [RecyclerView] according to the canvas unit rules
+     */
+    private fun useMultiItemRecyclerView(items: SpecialsList, displayMetrics: DisplayMetrics) {
+        val recyclerView = rootView.findViewById(R.id.fragment_contents) as RecyclerView
+        val adapter = SpecialsListAdapter(items, displayMetrics)
         recyclerView.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
         recyclerView.adapter = adapter
         adapter.notifyDataSetChanged()

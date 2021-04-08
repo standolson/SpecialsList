@@ -1,12 +1,11 @@
 package com.swiftly.specialsapp.ui
 
 import android.graphics.Paint
+import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.annotation.DimenRes
-import androidx.databinding.BindingAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.swiftly.specialsapp.R
@@ -15,90 +14,68 @@ import com.swiftly.specialsapp.model.Special
 import com.swiftly.specialsapp.model.SpecialsList
 import com.swiftly.specialsapp.model.SpecialsSize
 
-class SpecialsListAdapter(val list: SpecialsList) : RecyclerView.Adapter<SpecialsListAdapter.SpecialsListViewHolder>() {
+/**
+ * A [RecyclerView.Adapter] to show the manager's specials according to the layout rules
+ */
+class SpecialsListAdapter(val list: SpecialsList, val displayMetrics: DisplayMetrics) :
+    RecyclerView.Adapter<SpecialsListAdapter.SpecialsListViewHolder>() {
 
-    private var rowLayout = mutableListOf<MutableList<Int>>()
+    private val rowLayout = list.computeRowLayout()
+    private val screenWidth = displayMetrics.widthPixels
 
-    init {
-        computeRowLayout()
-    }
+    class SpecialsListViewHolder(val viewGroup : ViewGroup) : RecyclerView.ViewHolder(viewGroup)
 
-    private fun computeRowLayout() {
-        rowLayout.clear()
-
-        if (list.managerSpecials == null || list.canvasUnit == null)
-            return
-
-        // Iterate over all of the specials and create an array for each line
-        // containing the indicies of the specials on that line.
-        //
-        // As part of this process, throw out any special that is missing or
-        // has no width
-        var rowTotalWidth = 0
-        var currentRow = mutableListOf<Int>()
-        for (i in list.managerSpecials!!.indices) {
-            val item = list.managerSpecials!![i]
-            if (item == null || item.width == null)
-                continue
-
-            if (rowTotalWidth + item.width!! > list.canvasUnit!!) {
-                rowLayout.add(currentRow)
-                currentRow = mutableListOf<Int>()
-                rowTotalWidth = 0
-            }
-            rowTotalWidth += item.width!!
-            currentRow.add(i)
-        }
-
-        // If there are any items left over, add them as a line now
-        if (currentRow.size > 0)
-            rowLayout.add(currentRow)
-    }
-
-    class SpecialsListViewHolder(val binding: SpecialsItemBinding) :
-        RecyclerView.ViewHolder(binding.root)
-
-    override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): SpecialsListViewHolder {
+    override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): SpecialsListAdapter.SpecialsListViewHolder {
         val inflater = LayoutInflater.from(viewGroup.context)
-        val binding = SpecialsItemBinding.inflate(inflater)
-        return SpecialsListViewHolder(binding)
+        val layout = inflater.inflate(R.layout.specials_row, viewGroup, false) as ViewGroup
+        return SpecialsListViewHolder(layout)
     }
 
     override fun onBindViewHolder(viewHolder: SpecialsListViewHolder, position: Int) {
-        val item = getItem(position)
-        viewHolder.binding.item = item
-        val size = SpecialsSize()
-        size.height = 600
-        size.width = 800
-        viewHolder.binding.sizeInfo = size
+        val row = getItem(position)
+        createSpecialsRow(row, viewHolder.viewGroup)
+    }
+
+    private fun createSpecialsRow(row: MutableList<Int>, viewGroup: ViewGroup) {
+        if (row.isEmpty())
+            return
+
+        val inflater = LayoutInflater.from(viewGroup.context)
+
+        // Remove all of the view as we are recycling
+        viewGroup.removeAllViews()
+
+        // Iterate over the row, inflating a data binding, and then add the view
+        // to the ViewGroup
+        for (i in row.indices) {
+            val item = list.managerSpecials!![row[i]]
+            val binding = SpecialsItemBinding.inflate(inflater)
+            createSpecialsView(binding, item!!)
+            viewGroup.addView(binding.root)
+        }
+    }
+
+    fun getItem(position: Int) = rowLayout!![position]
+
+    override fun getItemCount() =
+        if (rowLayout == null)
+            0
+        else
+            rowLayout.size
+
+    override fun getItemViewType(position: Int) = position
+
+    private fun createSpecialsView(binding: SpecialsItemBinding, item: Special) {
+        // Perform data binding of the item and the size of the item
+        binding.item = item
+        binding.sizeInfo = SpecialsSize(item, screenWidth, list.canvasUnit)
 
         // Add strikethrough on the text for the original price
-        val originalPriceView = viewHolder.itemView.findViewById(R.id.original_price) as TextView
+        val originalPriceView = binding.root.findViewById(R.id.original_price) as TextView
         originalPriceView.paintFlags = Paint.STRIKE_THRU_TEXT_FLAG
 
         // Use Glide to load the image
-        val imageView = viewHolder.itemView.findViewById(R.id.image) as ImageView
+        val imageView = binding.root.findViewById(R.id.image) as ImageView
         Glide.with(imageView.context).load(item.imageUrl).into(imageView)
     }
-
-    fun getItem(position: Int): Special = list.managerSpecials!![position]!!
-
-    override fun getItemCount(): Int =
-        if (list.managerSpecials == null)
-            0
-        else
-            list.managerSpecials!!.size
-}
-
-@BindingAdapter("android:layout_width")
-fun setLayoutWidth(view: ViewGroup, @DimenRes width: Int) {
-    val layoutParams = view.layoutParams
-    layoutParams.width = width
-    view.layoutParams = layoutParams
-}
-@BindingAdapter("android:layout_height")
-fun setLayoutHeight(view: ViewGroup, @DimenRes height: Int) {
-    val layoutParams = view.layoutParams
-    layoutParams.height = height
-    view.layoutParams = layoutParams
 }
